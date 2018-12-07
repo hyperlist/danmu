@@ -12,9 +12,14 @@
 
 function get()
 {
-   //也可以直接通过元素的属性Id来直接获取
-   var danmu = document.getElementById("danmu").value;
-   console.log(danmu)
+      //也可以直接通过元素的属性Id来直接获取
+      var danmu = document.getElementById("danmu").value;
+      console.log(danmu)
+      var text=[];
+      text.push(danmu);
+      var jsonString = JSON.stringify(text);  //[{"id":1,"name":"test1","age":2}]
+      console.log(jsonString);
+      return jsonString;
 }
 
 </script>
