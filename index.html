@@ -3,7 +3,19 @@
 <body>
 <p>hello</P>
 
+<form action="hehe.jsp" id="one" method="post" name="one1" >
+      弹幕 : <input type="text"   id="danmu" /><br>
+      <input type="button" value = "发射弹幕" onclick="get()">
+      </form>
 </body>
+<script type="text/javascript">
 
+function get()
+{
+   //也可以直接通过元素的属性Id来直接获取
+   var danmu = document.getElementById("danmu").value;
+   console.log(danmu)
+}
 
+</script>
 </html>
