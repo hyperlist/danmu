@@ -1,26 +1,71 @@
+<!DOCTYPE html>
 <html>
-<title>index</title>
-<body>
-<p>hello</P>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="./qwebchannel.js"></script>
+        <script type="text/javascript">
+            //BEGIN SETUP
+            function output(message) {
+                var output = document.getElementById("output");
+                output.innerHTML = output.innerHTML + message + "\n";
+            }
+            window.onload = function() {
+                if (location.search != "")
+                    var baseUrl = (/[?&]webChannelBaseUrl=([A-Za-z0-9\-:/\.]+)/.exec(location.search)[1]);
+                else
+                    var baseUrl = "ws://localhost:12345";
+                var socket = new WebSocket(baseUrl);
 
-<form action="hehe.jsp" id="one" method="post" name="one1" >
-      弹幕 : <input type="text"   id="danmu" /><br>
-      <input type="button" value = "发射弹幕" onclick="get()">
-      </form>
-</body>
-<script type="text/javascript">
+                socket.onclose = function() {
+                    console.error("web channel closed");
+                };
+                socket.onerror = function(error) {
+                    console.error("web channel error: " + error);
+                };
+                socket.onopen = function() {
+                    output("WebSocket connected, setting up QWebChannel.");
+                    new QWebChannel(socket, function(channel) {
+                        // make core object accessible globally
+                        window.core = channel.objects.core;
 
-function get()
-{
-      //也可以直接通过元素的属性Id来直接获取
-      var danmu = document.getElementById("danmu").value;
-      console.log(danmu)
-      var text=[];
-      text.push(danmu);
-      var jsonString = JSON.stringify(text);  //[{"id":1,"name":"test1","age":2}]
-      console.log(jsonString);
-      return jsonString;
-}
-
-</script>
+                        document.getElementById("send").onclick = function() {
+                            var input = document.getElementById("input");
+                            var text = input.value;
+                            if (!text) {
+                                return;
+                            }
+                            input.value="";
+                            core.receiveText(text);
+                        }
+                    });
+                }
+            }
+            //END SETUP
+        </script>
+        <style type="text/css">
+            html {
+                height: 100%;
+                width: 100%;
+            }
+            #input {
+                width: 400px;
+                margin: 0 10px 0 0;
+            }
+            #send {
+                width: 90px;
+                margin: 0;
+            }
+            #output {
+                width: 500px;
+                height: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="output"></textarea><br />
+        
+            <input id="input" />
+            <input type="submit" id="send" value="Send" onclick="javascript:click();" />
+        
+    </body>
 </html>
